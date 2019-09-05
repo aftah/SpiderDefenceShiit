@@ -1,59 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemySpawner : MonoBehaviour
 {
 
     [SerializeField] private GameObject enemy;
-    [SerializeField] float waveSpawnTime=5;
-   
+    [SerializeField] private List<Transform> listGate;
     [SerializeField] private int enemyCount;
     [SerializeField] private float timeToWait;
-    [SerializeField] private bool stopSpawning = false;
 
-   
 
-    //private List<GameObject> listEnemy;
-
-    private void Awake()
-    {
-       
-       
-    }
+    private Transform enemyToGate; 
 
     private void Start()
     {
 
-        //listEnemy = new List<GameObject>(); 
-        //if (!stopSpawning)
-        //   InvokeRepeating("WaveSpawn",waveSpawnTime, waveSpawnTime);
-
+        Invoke("SpawnEnemy", timeToWait);
        
     }
 
-    private void Update()
-    {
-        GameObject obj = Instantiate(enemy, this.transform.position, Quaternion.identity);
-    }
+   
 
-    IEnumerator EnemyDrop()
+    private void SpawnEnemy()
     {
-       
-        
-        for (int i = 0; i < enemyCount -1; i++)
-        {
+        GameObject objEnemy = Instantiate(enemy, this.transform.position, Quaternion.identity);
 
-            GameObject obj = Instantiate(enemy,this.transform.position, Quaternion.identity);
-           
-          
-            yield return new WaitForSeconds(timeToWait); 
-        }
-    }
-
-    void WaveSpawn()
-    {
-        StartCoroutine(EnemyDrop());
+        enemyToGate = listGate [Random.Range(0, listGate.Count - 1)];
+        objEnemy.GetComponent<MoveEnemyToTarget>().gate = enemyToGate;
+        Invoke("SpawnEnemy", Random.Range(timeToWait,5));
     }
 }
